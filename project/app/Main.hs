@@ -36,10 +36,20 @@ module Main where
         hdl <- socketToHandle sock ReadWriteMode
         chat_classifier <- trainedClassifier "./src/chatbot-training-data.csv"
         hSetBuffering hdl NoBuffering
-        let response = classify chat_classifier "Do gift certificates expire?"
-        hPutStrLn hdl response
         hPutStrLn hdl "Hi, what do you need assistance with?"
         question <- fmap init (hGetLine hdl)
+        let category = classify chat_classifier question
+        -- get top response for category
+        -- hPutStrLn hdl (getTopResponse category)
+
+        hPutStrLn hdl "Was this what you were looking for? (y/n)"
+        answer <- fmap init (hGetLine hdl)
+        if answer == "y"
+          then 
+            -- interactionloop (bumpProbability category response)
+            -- increase choice probability ( if not top choice)
+          else
+            -- show next answer
         -- hPutStrLn hdl (classify chat_classifier text)
     
         commLine <- dupChan chan
