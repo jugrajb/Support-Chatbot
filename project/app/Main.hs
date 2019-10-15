@@ -7,6 +7,8 @@ module Main where
     import Control.Concurrent
     import Control.Monad (when)
     import Control.Monad.Fix (fix)
+    import ChatClassifier
+    import BayesClassifier
     
     main :: IO ()
     main = do
@@ -32,12 +34,13 @@ module Main where
     runConn (sock, _) chan msgNum = do
         let broadcast msg = writeChan chan (msgNum, msg)
         hdl <- socketToHandle sock ReadWriteMode
+        chat_classifier <- trainedClassifier "./src/chatbot-training-data.csv"
         hSetBuffering hdl NoBuffering
-    
-        hPutStrLn hdl "Hi, what's your name?"
-        name <- fmap init (hGetLine hdl)
-        broadcast ("--> " ++ name ++ " entered chat.")
-        hPutStrLn hdl ("Welcome, " ++ name ++ "!")
+        let response = classify chat_classifier "Do gift certificates expire?"
+        hPutStrLn hdl response
+        hPutStrLn hdl "Hi, what do you need assistance with?"
+        question <- fmap init (hGetLine hdl)
+        -- hPutStrLn hdl (classify chat_classifier text)
     
         commLine <- dupChan chan
     
@@ -53,8 +56,8 @@ module Main where
                  -- If an exception is caught, send a message and break the loop
                  "quit" -> hPutStrLn hdl "Bye!"
                  -- else, continue looping.
-                 _      -> broadcast (name ++ ": " ++ line) >> loop
+                 --_      -> broadcast (name ++ ": " ++ line) >> loop
     
         killThread reader                      -- kill after the loop ends
-        broadcast ("<-- " ++ name ++ " left.") -- make a final broadcast
+        --broadcast ("<-- " ++ name ++ " left.") -- make a final broadcast
         hClose hdl                             -- close the handle

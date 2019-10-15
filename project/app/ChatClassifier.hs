@@ -1,4 +1,5 @@
   
+module ChatClassifier where
 
 import System.IO
 import BayesClassifier
@@ -28,9 +29,9 @@ trainline:: Classifier -> [String] -> Classifier
 trainline cls a = train cls (a !! 0) (a !! 1)
 
 
-trainedClassifier :: IO Classifier
-trainedClassifier = do
-    trainingData <- splitcsv "htraining.csv"
+trainedClassifier :: FilePath -> IO Classifier
+trainedClassifier fp = do
+    trainingData <- splitcsv fp
     let trained_classifier = foldl trainline classifier trainingData
     return trained_classifier
 

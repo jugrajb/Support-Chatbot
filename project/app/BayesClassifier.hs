@@ -1,4 +1,4 @@
-     module BayesClassifier where
+    module BayesClassifier where
     -- Text Classifier Using Bayes Formula
     import Data.List
     import Data.Char
