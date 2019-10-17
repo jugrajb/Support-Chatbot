@@ -12,6 +12,9 @@ readCsv filename = do
     file <- readFile filename
     return [splitsep (==',') row | row <- ( splitsep (=='\n') file )]
 
+writeCsv :: FilePath -> [Char] -> [Char] -> IO ()
+writeCsv filename c q = appendFile filename ("\n" ++ c ++ "," ++ q)
+
 fetchAnswer :: FilePath -> Category -> IO String
 fetchAnswer filename c = do
     file <- readFile filename

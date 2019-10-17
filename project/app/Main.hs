@@ -56,6 +56,8 @@ module Main where
                   hPutStrLn hdl ("Category: " ++ category)
 
                   let prob = probabilityForCategory chat_classifier question category
+                  -- hPutStrLn hdl ("Prob: " ++ (show prob))
+
                   let ansDir = (curdDir ++ "/project/src/answers.csv")
                   str <- fetchAnswer ansDir (dropWhile (==' ') category)
 
@@ -65,8 +67,9 @@ module Main where
                   hPutStrLn hdl "Chatbot: To help us improve, was this answer helpful? (y/n)"
                   answer <- fmap init (hGetLine hdl)
                   if answer == "y"
-                    then 
+                    then do
                       --- if answer is good, add question with category to questions.csv
+                      write <- writeCsv (curdDir ++ "/project/src/questions.csv") (dropWhile (==' ') category) question
                       hPutStrLn hdl "Chatbot: If you need anymore help feel free to ask another question, otherwise type 'quit' to exit"
                     else
                       -- nothing
