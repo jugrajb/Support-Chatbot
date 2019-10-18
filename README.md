@@ -7,7 +7,7 @@ External Packages Needed
 - Network
 
 To Install Package 
-- run >> stack install <package>
+- run >> stack install "package name here"
   
 To start run
 - stack build
