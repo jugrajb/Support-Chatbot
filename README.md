@@ -27,4 +27,4 @@ Details
 - Naive bayes implementation to fetch most appropriate response for a given question
 - Training data updating via valid responses to improve results for future queries
 
-
+UBC WIKI LINK https://wiki.ubc.ca/Chatbot
