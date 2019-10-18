@@ -13,6 +13,10 @@ To start run
 - stack build
 - stack exec chatbot-exe
 
+To connect to socket
+- install telent via brew
+- run >> telnet localhost 4241
+
 Note 
 - configured for use on unix filesystems
 
