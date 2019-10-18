@@ -6,6 +6,9 @@ Language
 External Packages Needed
 - Network
 
+To Install Package 
+- run >> stack install <package>
+  
 To start run
 - stack build
 - stack exec chatbot-exe
