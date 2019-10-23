@@ -5,7 +5,10 @@
     -- Text Classifier Using Bayes Formula
     import Data.List
     import Data.Char
+    -- Category of type String
     type Category = String
+    -- Classifier a new type that consists of a category and a list of strings, it
+    -- derives eq, and show for comparison and visulization of the classified data
     newtype Classifier = Classifier { training :: [(Category, [String])] } deriving (Eq, Show)
 
     -- Get a new classifer with no training
@@ -14,16 +17,17 @@
 
     -- classifier probabilities
     probabilityOfWordInCategory :: Classifier -> String -> Category -> Double
-    -- Adding + 1 for Laplacian Correction
+    -- Adding + 1 for Laplacian Correction to correct worse case comparisons
     probabilityOfWordInCategory (Classifier training) word category = let allInCategory = filter (\(cat, _) -> cat == category) training
                                                                           allInCategoryContainingWord = filter (\(_, text) -> word `elem` text) allInCategory
                                                                       in (fromIntegral $ length allInCategoryContainingWord + 1) / (fromIntegral $ length allInCategory + 1)
 
+    -- determines the probability of a category using the training data
     probabilityOfCategory :: Classifier -> Category -> Double
     probabilityOfCategory (Classifier training) category =  let allInCategory = filter (\(cat, _) -> cat == category) training 
                                                             in (fromIntegral $ length allInCategory) / (fromIntegral $ length training)
 
-    -- Train a classifier
+    -- Train a classifier using a give string
     train :: Classifier -> String -> Category -> Classifier 
     train (Classifier training ) text category = Classifier $ (category, cleanInput $ text):training
 

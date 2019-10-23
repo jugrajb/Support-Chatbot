@@ -74,13 +74,30 @@ module Main where
                   -- otherwise get appropriate response
                   if (not incat)
                     then do
-                      hPutStrLn hdl "Sorry, I can't answer that please make sure your question is part of acceptable categories"
-                      hPutStrLn hdl (show (cats !! 0))
+                      if training == "y" 
+                        then do
+                          hPutStrLn hdl "Sorry, I can't answer that please make sure your question is part of acceptable categories"
+                          hPutStrLn hdl "Add to existing category (y/n)?"
+                          existing <- fmap init (hGetLine hdl)
+                          if existing == "y"
+                            then do
+                              hPutStrLn hdl "Training Enabled please enter a Category"
+                              cat <- fmap init (hGetLine hdl)
+                              write <- writeCsvR (curdDir ++ "/project/src/questions.csv") cat question
+                              hPutStrLn hdl "Question added under category, you may ask another question"
+                            else do
+                              hPutStrLn hdl "Training Enabled please enter a answer"
+                              ans <- fmap init (hGetLine hdl)
+                              hPutStrLn hdl "Training Enabled please enter a Category"
+                              cat <- fmap init (hGetLine hdl)
+                              write <- writeCsvR (curdDir ++ "/project/src/questions.csv") cat question
+                              write <- writeCsv (curdDir ++ "/project/src/answers.csv") cat ans
+                              write <- writeCat (curdDir ++ "/project/src/categories.csv") cat  
+                              hPutStrLn hdl "Question answer pair added, you may ask another question"
+                        else do
+                          hPutStrLn hdl "Sorry, I can't answer that please make sure your question is part of acceptable categories"
+                          hPutStrLn hdl (show (cats !! 0))
                     else do
-                      -- DEBUG CODE: REMOVE BEFORE DEMO
-                      --let probs = foldr (\h acc -> ((classify chat_classifier question),(probabilityForCategory chat_classifier question (classify chat_classifier question))):acc) [] cleanq
-                      --hPutStrLn hdl (show probs)
-
                       -- get category, prob of valid answer
                       let category = classify chat_classifier question
                       let prob = probabilityForCategory chat_classifier question category
@@ -88,7 +105,7 @@ module Main where
 
                       -- if prob of answer is above a threshold return a response
                       -- otherwise return fail message for no valid response found with training data
-                      if prob > -5.0
+                      if prob > -10.0
                         then do
                           -- fetch answer
                           str <- fetchAnswer ansDir (dropWhile (==' ') category)
@@ -123,9 +140,9 @@ module Main where
                                   ans <- fmap init (hGetLine hdl)
                                   hPutStrLn hdl "Training Enabled please enter a Category"
                                   cat <- fmap init (hGetLine hdl)
-                                  hPutStrLn hdl ("Category: " ++ cat)
                                   write <- writeCsvR (curdDir ++ "/project/src/questions.csv") cat question
                                   write <- writeCsv (curdDir ++ "/project/src/answers.csv") cat ans
+                                  write <- writeCat (curdDir ++ "/project/src/categories.csv") cat  
                                   hPutStrLn hdl "Question answer pair added, you may ask another question"
                             else 
                               hPutStrLn hdl "No relevant answer found, you may ask another question"
